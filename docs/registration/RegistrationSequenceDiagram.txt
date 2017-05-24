@@ -1,0 +1,24 @@
+title Registration Flow
+
+note right of User: User wants to register
+User->Registration-FE: Get: /registration
+Registration-FE-->User: returns 200 and reg page 1
+User-> Registration-FE: Post: /registration
+note right of Registration-FE: Validate form data
+Registration-FE->Registration: Post: /registration with data
+Registration->User-Details: Post: /user with data
+note right of User-Details: Save user details to Mongo with generated userId
+User-Details-->Registration: returns 201 with new userId
+Registration->Session: Post: /session with userId
+Session-->Registration: returns 201 with session UUID
+Registration-> Email: Post: /verification with data
+note right of Email: Generates an email verification link and saves in Mongo
+note right of Email: Sends email to user with email verification link
+Email-->Registration: returns 204
+Registration-->Registration-FE: returns 200 with session UUID
+note right of Registration-FE: Adds session UUID to session cookie
+Registration-FE-->User: return 303 to email confirmation page
+User->Registration-FE: Get: /confirmation
+Registration-FE-->User: returns 200 and email confirmation page
+User->Registration-FE: Post: /confirmation
+Registration-FE-->User: return 303 to homepage
